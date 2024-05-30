@@ -1,4 +1,5 @@
 name: frontend-ci
+
 on:
   pull_request:
     branches: [main]
@@ -10,25 +11,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: checkout
-      uses: actions/checkout@v3 
-    - name: run lint
-      run: npm --prefix starter/frontend install && npm --prefix starter/frontend run lint
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Run lint
+      run: |
+        echo "Installing dependencies and running lint..."
+        npm --prefix starter/frontend install
+        npm --prefix starter/frontend run lint
 
   test:
     runs-on: ubuntu-latest
 
     steps:
-    - name: checkout
-      uses: actions/checkout@v3 
-    - name: run tests
-      run: npm --prefix starter/frontend install && CI=true npm --prefix starter/frontend test
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Run tests
+      run: |
+        echo "Installing dependencies and running tests..."
+        npm --prefix starter/frontend install
+        CI=true npm --prefix starter/frontend test
 
   build:
     runs-on: ubuntu-latest
     needs: [lint, test]
     steps:
-    - name: checkout
-      uses: actions/checkout@v3 
-    - name: run build
-      run: npm --prefix starter/frontend install && CI=true npm --prefix starter/frontend run build
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Run build
+      run: |
+        echo "Building application..."
+        npm --prefix starter/frontend install
+        CI=true npm --prefix starter/frontend run build
