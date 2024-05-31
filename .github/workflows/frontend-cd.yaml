@@ -102,12 +102,12 @@ jobs:
         context: starter/frontend
         file: starter/frontend/Dockerfile
         build-args: "REACT_APP_MOVIE_API_URL=${{ env.API_URL }}"
-        tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPO_NAME }}:${{ env.CONTAINER_TAG }}
+        tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPO_NAME }}:${{ github.sha }}
         push: true
 
     - name: Configure Kubeconfig
       run:
-        aws eks update-kubeconfig --name cluster --region us-east-1
+        aws eks update-kubeconfig --name cluster --region ${{ env.AWS_REGION }}
 
     - name: deploy docker image to amazon EKS
       working-directory: starter/frontend/k8s
@@ -116,5 +116,5 @@ jobs:
         REPO_NAME: frontend
       run: |
         aws eks update-kubeconfig --name cluster --region us-east-1
-        kustomize edit set image frontend=${{ env.ECR_REGISTRY }}/${{ env.ECR_REPO_NAME }}:${{ env.CONTAINER_TAG }}
+        kustomize edit set image frontend=${{ env.ECR_REGISTRY }}/${{ env.ECR_REPO_NAME }}:${{ github.sha }}
         kustomize build | kubectl apply -f -
