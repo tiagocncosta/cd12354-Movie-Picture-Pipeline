@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: checkout
       uses: actions/checkout@v3
 
     - name: setup python
@@ -48,7 +48,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install pipenv flake8
 
-    - name: Run tests
+    - name: tests
       run: |
         echo "Running tests with pipenv..."
         cd starter/backend && pipenv install pytest && pipenv run test
@@ -58,10 +58,10 @@ jobs:
     needs: [lint, test]
 
     steps:
-    - name: Checkout code
+    - name: checkout
       uses: actions/checkout@v3
 
-    - name: Build Docker Image
+    - name: build docker image
       run: |
         cd starter/backend
         docker build -t backend:latest . 

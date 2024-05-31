@@ -71,7 +71,7 @@ jobs:
         cache: 'npm'
         cache-dependency-path: starter/frontend/package-lock.json
 
-    - name: build and run docke
+    - name: build and run docker
       run: |
         cd starter/frontend
         docker build --build-arg=REACT_APP_MOVIE_API_URL=http://localhost:5000 --tag=frontend:latest .
