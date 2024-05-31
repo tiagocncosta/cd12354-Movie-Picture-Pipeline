@@ -92,6 +92,7 @@ jobs:
           push: true
 
       - name: Update Kubeconfig
+        working-directory: starter/backend/k8s
         run: |
           aws eks update-kubeconfig --name cluster --region ${{ env.AWS_REGION }}
           kustomize edit set image backend=${{ env.ECR_REGISTRY }}/${{ env.ECR_REPO_NAME }}:${{ github.sha }}
