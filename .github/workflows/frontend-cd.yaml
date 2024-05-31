@@ -65,10 +65,14 @@ jobs:
     needs: [lint, test]
 
     env:
-      ECR_REPO_NAME: '038131199487.dkr.ecr.us-east-1.amazonaws.com/frontend'
+      ECR_REPO_NAME: 'frontend'
+      ECR_REGISTRY: '038131199487.dkr.ecr.us-east-1.amazonaws.com'
       CONTAINER_TAG: 'latest'
       API_URL: 'http://localhost:5000'
       AWS_REGION: 'us-east-1'
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
 
     steps:
     - name: Checkout code
@@ -82,10 +86,6 @@ jobs:
         cache-dependency-path: starter/frontend/package-lock.json
 
     - name: set aws credentials
-      env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
       run: |
           aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID &&
           aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY &&
@@ -94,8 +94,7 @@ jobs:
     - name: docker login
       run: |
         echo "Logging into Docker registry..."
-        AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account | jq -r .)
-        docker login -u AWS -p $(aws ecr get-login-password --region ${{ env.AWS_REGION }}) ${AWS_ACCOUNT_ID}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+        docker login -u AWS -p $(aws ecr get-login-password --region ${{ env.ECR_REGISTRY }})
 
     - name: build and push docker image
       uses: docker/build-push-action@v2
@@ -103,7 +102,7 @@ jobs:
         context: starter/frontend
         file: starter/frontend/Dockerfile
         build-args: "REACT_APP_MOVIE_API_URL=${{ env.API_URL }}"
-        tags: ${{ env.ECR_REPO_NAME }}:${{ env.CONTAINER_TAG }}
+        tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPO_NAME }}:${{ env.CONTAINER_TAG }}
         push: true
 
     - name: Configure Kubeconfig
@@ -117,5 +116,5 @@ jobs:
         REPO_NAME: frontend
       run: |
         aws eks update-kubeconfig --name cluster --region us-east-1
-        kustomize edit set image frontend=${AWS_ACCOUNT_ID}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/$REPO_NAME:$IMAGE_TAG
+        kustomize edit set image frontend=${{ env.ECR_REGISTRY }}/${{ env.ECR_REPO_NAME }}:${{ env.CONTAINER_TAG }}
         kustomize build | kubectl apply -f -
