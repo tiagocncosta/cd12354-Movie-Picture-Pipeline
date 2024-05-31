@@ -1,4 +1,4 @@
-name: frontend-cd
+name: Frontend Continuous Deployment
 
 on:
   workflow_dispatch:
@@ -19,25 +19,51 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: checkout
       uses: actions/checkout@v3
-    - name: Run lint
+
+    - name: Node 18
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        cache: 'npm'
+        cache-dependency-path: starter/frontend/package-lock.json
+
+    - name: install dependencies
+      working-directory: starter/frontend
       run: |
-        echo "Installing dependencies and running lint..."
-        npm --prefix starter/frontend install
-        npm --prefix starter/frontend run lint
+        echo "Installing dependencies..."
+        npm ci
+
+    - name: lint
+      run: |
+        echo "Running lint..."
+        cd starter/frontend && npm run lint
 
   test:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: checkout
       uses: actions/checkout@v3
-    - name: Run tests
+
+    - name: node 18
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        cache: 'npm'
+        cache-dependency-path: starter/frontend/package-lock.json
+
+    - name: install dependencies
+      working-directory: starter/frontend
       run: |
-        echo "Installing dependencies and running tests..."
-        npm --prefix starter/frontend install
-        CI=true npm --prefix starter/frontend test
+        echo "Installing dependencies..."
+        npm ci
+
+    - name: test
+      run: |
+        echo "Installing dependencies..."
+        cd starter/frontend && npm run test
 
   build:
     runs-on: ubuntu-latest
