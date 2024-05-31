@@ -36,24 +36,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: checkout
+      uses: actions/checkout@v3
 
-      - name: Use Python 3
-        uses:  actions/setup-python@v4
-        with:
-          python-version: "3.11"
+    - name: setup python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
 
-      - name: Install pipenv and flake8
-        run: |
-          echo "Installing pipenv and flake8..."
-          python -m pip install --upgrade pip
-          pip install pipenv flake8
+    - name: install pipenv and flake8
+      run: |
+        echo "Installing pipenv and flake8..."
+        python -m pip install --upgrade pip
+        pip install pipenv flake8
 
-      - name: test
-        run: |
-          echo "Running tests with pipenv..."
-          cd starter/backend && pipenv run test
+    - name: tests
+      run: |
+        echo "Running tests with pipenv..."
+        cd starter/backend && pipenv install pytest && pipenv run test
+
 
   build:
     runs-on: ubuntu-latest
