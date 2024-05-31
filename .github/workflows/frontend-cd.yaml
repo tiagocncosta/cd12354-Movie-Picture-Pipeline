@@ -67,7 +67,7 @@ jobs:
     env:
       ECR_REPO_NAME: '038131199487.dkr.ecr.us-east-1.amazonaws.com/frontend'
       CONTAINER_TAG: 'latest'
-      API_URL: 'http://url'
+      API_URL: 'http://localhost:5000'
       AWS_REGION: 'us-east-1'
 
     steps:
