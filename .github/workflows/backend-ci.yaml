@@ -68,4 +68,4 @@ jobs:
     - name: build docker image
       run: |
         cd starter/backend
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$CONTAINER_TAG . 
+        docker build -t $ECR_REGISTRY/$ECR_REPO_NAME:$CONTAINER_TAG . 

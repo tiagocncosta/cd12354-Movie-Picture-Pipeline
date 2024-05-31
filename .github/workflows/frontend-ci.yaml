@@ -79,5 +79,5 @@ jobs:
     - name: build and run docker
       run: |
         cd starter/frontend
-        docker build --build-arg=REACT_APP_MOVIE_API_URL=http://localhost:5000 -t $ECR_REGISTRY/$ECR_REPOSITORY:$CONTAINER_TAG . 
+        docker build --build-arg=REACT_APP_MOVIE_API_URL=http://localhost:5000 -t $ECR_REGISTRY/$ECR_REPO_NAME:$CONTAINER_TAG . 
         docker run --name frontend -p 3000:3000 -d frontend
